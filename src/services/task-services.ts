@@ -31,11 +31,15 @@ export const TaskService = {
     return task;
   },
 
-  async create(userId: number, data: { title: string; description?: string }) {
+  async create(
+    userId: number,
+    data: { title: string; description?: string; completed: boolean },
+  ) {
     const task = await prisma.task.create({
       data: {
         title: data.title,
         description: data.description,
+        completed: data.completed,
         userId,
       },
       select: taskSelect,

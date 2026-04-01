@@ -9,22 +9,22 @@ export function authMiddleware(
   res: Response,
   next: NextFunction,
 ) {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.token;
 
-  if (!authHeader)
+  if (!token)
     throw new AppError("Token não fornecido", HTTP_STATUS.UNAUTHORIZED);
-
-  const [, token] = authHeader.split(" ");
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       userId: number;
     };
+    console.log("req.headers.cookie:", req.headers.cookie);
+    console.log("req.cookies:", req.cookies);
 
     req.userId = decoded.userId;
 
     return next();
-  } catch (rror) {
+  } catch (error) {
     throw new AppError("Token inválido.", HTTP_STATUS.UNAUTHORIZED);
   }
 }

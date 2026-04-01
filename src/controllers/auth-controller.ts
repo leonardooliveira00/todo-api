@@ -23,13 +23,16 @@ export const AuthController = {
     });
 
     if (!user)
-      throw new AppError("Credenciais inválidas.", HTTP_STATUS.UNAUTHORIZED);
+      throw new AppError(
+        "Email ou senha incorretos.",
+        HTTP_STATUS.UNAUTHORIZED,
+      );
 
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch)
       throw new AppError(
-        "Login ou senha incorretos.",
+        "Email ou senha incorretos.",
         HTTP_STATUS.UNAUTHORIZED,
       );
 
@@ -39,6 +42,13 @@ export const AuthController = {
       { expiresIn: "1d" },
     );
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     return res.json({
       user: {
         id: user.id,
@@ -47,5 +57,26 @@ export const AuthController = {
       },
       token,
     });
+  },
+
+  async me(req: Request, res: Response) {
+    const userId = req.userId;
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    if (!user)
+      throw new AppError(
+        "Erro ao encontrar o usuário",
+        HTTP_STATUS.INTERNAL_SERVER_ERROR,
+      );
+
+    return res.json(user);
   },
 };
