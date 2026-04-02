@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
-import bcrypt from "bcrypt";
+import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 
 import { AppError } from "../errors/app-error";
@@ -28,7 +28,7 @@ export const AuthController = {
         HTTP_STATUS.UNAUTHORIZED,
       );
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await argon2.verify(user.password, password);
 
     if (!passwordMatch)
       throw new AppError(
