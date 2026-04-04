@@ -1,10 +1,20 @@
 import argon2 from "argon2";
 
-export async function hashPassword(password: string) {
-  return argon2.hash(password, {
-    type: argon2.argon2id,
-    memoryCost: 65536,
-    timeCost: 3,
-    parallelism: 1,
-  });
-}
+const ARGON_OPTIONS = {
+  type: argon2.argon2id,
+  memoryCost: 65536,
+  timeCost: 3,
+  parallelism: 1,
+};
+
+export const hashPassword = async (password: string): Promise<string> => {
+  try {
+    return await argon2.hash(password, ARGON_OPTIONS);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Erro ao processar credenciais.", error);
+      throw new Error("Erro ao processar credenciais.");
+    }
+    throw new Error("Ocorreu um erro desconhecido.");
+  }
+};
