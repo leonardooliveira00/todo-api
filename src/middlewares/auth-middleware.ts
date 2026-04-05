@@ -18,8 +18,6 @@ export function authMiddleware(
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       userId: number;
     };
-    console.log("req.headers.cookie:", req.headers.cookie);
-    console.log("req.cookies:", req.cookies);
 
     req.userId = decoded.userId;
 
