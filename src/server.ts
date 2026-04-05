@@ -9,18 +9,22 @@ import authRoute from "./routes/auth-route";
 import errorMiddleware from "./middlewares/error-middleware";
 const app = express();
 
+app.use(helmet());
+
 app.use(
   cors({
     origin: "http://localhost:3000",
     credentials: true,
   }),
 );
-app.use(helmet());
+
 app.use(express.json());
 app.use(cookieParser());
+
 app.use("/users", userRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/auth", authRoute);
+
 app.use(errorMiddleware);
 
 const PORT = 3333;
