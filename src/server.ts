@@ -13,7 +13,7 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
   }),
 );
@@ -27,7 +27,5 @@ app.use("/auth", authRoute);
 
 app.use(errorMiddleware);
 
-const PORT = 3333;
-app.listen(PORT, () => {
-  console.log(`Servidor em execução na porta ${PORT}`);
-});
+const PORT = process.env.PORT || 3333;
+app.listen(Number(PORT), "0.0.0.0", () => {});
